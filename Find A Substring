@@ -1,1 +1,40 @@
-Code
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Solution{
+
+
+	public static void main(String[] args) {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+		
+		Scanner in = new Scanner(System.in);
+		int n = Integer.parseInt(in.nextLine());
+		String[] stringArray = new String[n];
+		for (int i = 0; i < n; i++)
+			stringArray[i] = in.nextLine();
+		
+		int t = Integer.parseInt(in.nextLine());
+		String ch;
+		for (int i = 0; i < t; i++) {
+			ch = in.nextLine();
+			char[] chArray = ch.toCharArray();
+			StringBuffer strbuff = new StringBuffer();
+			strbuff.append("[0-9A-Za-z|_]");
+			for (int j = 0; j < chArray.length; j++)
+				strbuff.append("[" + chArray[j]+"]");
+			strbuff.append("[0-9A-Za-z|_]");
+			String regex = strbuff.toString();
+			Pattern pattern = Pattern.compile(regex);
+			int counter = 0;
+			for (int j = 0; j < n; j++) {
+				Matcher matcher = pattern.matcher(stringArray[j]);
+				
+				while(matcher.find())
+					counter++;
+			}
+			System.out.println(counter);
+		}
+	}
+}
+
