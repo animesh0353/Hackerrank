@@ -1,0 +1,46 @@
+
+import java.util.*;
+
+public class Solution{
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        try{
+            Scanner in = new Scanner(System.in);
+            int n = Integer.parseInt(in.nextLine());
+            String regex = ".*[z][e]$";
+            Map<String, Integer> map = new HashMap<String, Integer>();
+            for (int i = 0; i < n; i++) 
+            {
+				String string = in.nextLine();
+				String[] str = string.split(" ");
+				for (int j = 0; j < str.length; j++) {
+					if(map.containsKey(str[j]))
+					{
+						int freq = map.get(str[j]);
+						map.put(str[j], ++freq);
+					}
+					else
+						map.put(str[j], 1);
+				}
+			}
+            int t = Integer.parseInt(in.nextLine());
+            for (int i = 0; i < t; i++) {
+            	String string = in.nextLine();
+				int count = 0;
+				if(map.containsKey(string))
+					count = map.get(string);
+				char[] ch = string.toCharArray();
+				ch[string.length() -2] = 's';
+				String st1 = new String(ch);
+				if(map.containsKey(st1))
+					count += map.get(st1);
+				System.out.println(count);
+			}
+            
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
