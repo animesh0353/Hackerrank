@@ -1,0 +1,135 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class Solution{
+	
+	public static class Edge
+	{
+		int destination;
+		int weight;
+		public Edge(int destination, int weight) {
+			// TODO Auto-generated constructor stub
+			this.destination = destination;
+			this.weight = weight;
+		}
+	}
+	
+	public static class Node
+	{
+		int id;
+		int key;
+		ArrayList<Edge> edge;
+		public Node(int id) {
+			// TODO Auto-generated constructor stub
+			this.id = id;
+			this.key = Integer.MAX_VALUE;
+			this.edge = new ArrayList<Solution.Edge>();
+		}
+		
+	}
+	
+	public static class Graph
+	{
+		Map<Integer, Node> map = new HashMap<Integer, Solution.Node>();
+		public Graph(int n) {
+			// TODO Auto-generated constructor stub
+			for (int i = 1; i <= n; i++) 
+			{
+				Node node = new Node(i);
+				map.put(i, node);
+			}
+		}
+		void addEdge(int source, int destination, int weight)
+		{
+			// Add Edges to source node
+			Node node = map.get(source);
+			Edge edge = new Edge(destination, weight);
+			node.edge.add(edge);
+			
+			// Add Edges to destination node
+			node = map.get(destination);
+			edge = new Edge(source, weight);
+			node.edge.add(edge);
+		}
+	}
+	
+	public static void Prims(Graph graph, int n, int start)
+	{
+		Node node = graph.map.get(start);
+		node.key = 0;
+		PriorityQueue<Node> pq = new PriorityQueue<Node>(new Comparator<Node>() {
+
+			public int compare(Node o1, Node o2) {
+				// TODO Auto-generated method stub
+				return Integer.compare(o1.key, o2.key);
+			}
+		} );
+		// fetch all vertices and add it to priority queue
+//		for(int i=1; i<=n; i++)
+//		{
+//			node = graph.map.get(i);
+//			pq.add(node);
+//		}
+		pq.add(node);
+		boolean[] visited = new boolean[n+1];
+		Arrays.fill(visited, false);
+		while(!pq.isEmpty())
+		{
+			node = pq.remove();
+			if(visited[node.id])
+				continue;
+			visited[node.id] = true;
+			ArrayList<Edge> edgeList = node.edge;
+			
+			for (Edge edge : edgeList) {
+				Node tempNode = graph.map.get(edge.destination);
+				if(!visited[tempNode.id] && edge.weight < tempNode.key)
+				{
+					tempNode.key = edge.weight;
+					pq.add(tempNode);
+				}
+			}
+		}
+		long sum = 0;
+		for (int i = 1; i <= n; i++) {
+			sum += graph.map.get(i).key;
+		}
+		System.out.println(sum);
+		
+	}
+
+
+	public static void main(String[] args) {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+		
+		Scanner in = new Scanner(System.in);
+		String string = in.nextLine();
+		String[] str = string.split(" ");
+		int n = Integer.parseInt(str[0]);
+		int m = Integer.parseInt(str[1]);
+		
+		// Call the Graph constructor First 
+		Graph graph = new Graph(n);
+		// Read the edges 
+		for (int i = 0; i < m; i++) {
+			string = in.nextLine();
+			str = string.split(" ");
+			int source = Integer.parseInt(str[0]);
+			int destination = Integer.parseInt(str[1]);
+			int weight = Integer.parseInt(str[2]);
+			graph.addEdge(source, destination, weight);
+		}
+		// Read the start vertex of the tree
+		int start = Integer.parseInt(in.nextLine());
+		
+		Prims(graph, n, start);
+
+
+
+	}
+}
