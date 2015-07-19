@@ -1,0 +1,30 @@
+import java.util.Scanner;
+
+public class Solution{
+
+
+	public static void main(String[] args) {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+		
+		Scanner in = new Scanner(System.in);
+		int n = Integer.parseInt(in.nextLine());
+		String string;
+		String regexIP4 = "(([2](([0-4][0-9])|([5][0-5])))|([0-1][0-9]{2})|([0-9]{1,2}))";
+		String IP4 = regexIP4 +"."+ regexIP4 +"."+ regexIP4 +"."+ regexIP4;
+		String regexIP6 = "([0-9a-f]{1,4}.){11}([0-9a-f]{1,4})";
+//		String IP6 = regexIP6 +
+		for (int i = 0; i < n; i++)
+		{
+			string = in.nextLine();
+			if(string.matches(IP4))
+				System.out.println("IPv4");
+			else
+				if(string.matches(regexIP6))
+					System.out.println("IPv6");
+				else
+					System.out.println("Neither");
+			
+		}
+		
+	}
+}
