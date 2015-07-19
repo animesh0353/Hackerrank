@@ -1,0 +1,52 @@
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Solution{
+
+
+	public static void main(String[] args) {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+		
+		Scanner in = new Scanner(System.in);
+		int n = Integer.parseInt(in.nextLine());
+		String[] stringArray = new String[n];
+		for (int i = 0; i < n; i++)
+			stringArray[i] = in.nextLine();
+		
+		int t = Integer.parseInt(in.nextLine());
+		String ch;
+		for (int i = 0; i < t; i++) {
+			ch = in.nextLine();
+			String stringUS = null;
+			if(ch.matches("([\\w]+)our.*"))
+				stringUS = ch.replace("our", "or");
+			char[] chArray = ch.toCharArray();
+			char[] chArrayUS = stringUS.toCharArray();
+			StringBuffer strbuff = new StringBuffer();
+			StringBuffer strbuff2 = new StringBuffer();
+			
+			strbuff.append(ch + "((\\W)+|$)");
+			strbuff2.append(stringUS + "((\\W)+|$)");
+				
+			String regexUK = strbuff.toString();
+			String regexUS = strbuff2.toString();
+
+			Pattern patternUK = Pattern.compile(regexUK);
+			Pattern patternUS = Pattern.compile(regexUS);
+
+			int counter = 0;
+			for (int j = 0; j < n; j++) {
+				Matcher matcherUK = patternUK.matcher(stringArray[j]);
+				Matcher matcherUS = patternUS.matcher(stringArray[j]);
+
+				
+				while(matcherUK.find())
+					counter++;
+				while(matcherUS.find())
+					counter++;
+			}
+			System.out.println(counter);
+		}
+	}
+}
