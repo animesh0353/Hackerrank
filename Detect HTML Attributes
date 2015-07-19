@@ -1,0 +1,86 @@
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Solution{
+
+
+	public static void main(String[] args) {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+		
+		Scanner in = new Scanner(System.in);
+		int n = Integer.parseInt(in.nextLine());
+		String string;
+		String regexOnlyTag = "[<][\\w]+[>]";
+		String regexTagAttr2 = "[<][^>]+";
+		String regexTagWithAttr = "[<][\\w]+[ ]+[\\w]+";
+		String regexTagWithAttrNext = "[ ][\\w]+[=]";
+		Pattern tagPattern = Pattern.compile(regexOnlyTag);
+		Pattern tagWithAttrPattern2 = Pattern.compile(regexTagAttr2);
+		Pattern tagWithAttrPattern = Pattern.compile(regexTagWithAttr);
+		Pattern tagWithAttrPatternNext = Pattern.compile(regexTagWithAttrNext);
+		Map<String, Set<String>> tagMap = new HashMap<String, Set<String>>();
+		for (int i = 0; i < n; i++)
+		{
+			string = in.nextLine();
+			Matcher tagMatcher = tagPattern.matcher(string);
+			Matcher tagWithAttrMatcher2 = tagWithAttrPattern2.matcher(string);
+
+			while(tagMatcher.find())
+			{
+				String temp = string.substring(tagMatcher.start(), tagMatcher.end());
+				temp = temp.trim();
+				temp = temp.replaceAll("[<|>]", "");
+				if(!tagMap.containsKey(temp))
+					tagMap.put(temp, new HashSet<String>());
+			}
+			while(tagWithAttrMatcher2.find())
+			{
+				
+				String temp = string.substring(tagWithAttrMatcher2.start(), tagWithAttrMatcher2.end());
+				temp = temp.trim();
+				temp = temp.replaceAll("[<|>]", "");
+				String[] tempArray = temp.split("[\\W]");
+				tempArray[0] = tempArray[0].trim();
+				Matcher tagWithAttrMatcherNext = tagWithAttrPatternNext.matcher(temp);
+				while(tagWithAttrMatcherNext.find())
+				{
+					String temp2 = temp.substring(tagWithAttrMatcherNext.start()+1, tagWithAttrMatcherNext.end()-1);
+					Set<String> set;
+					if(!tagMap.containsKey(tempArray[0]))
+					{
+						set = new HashSet<String>();
+						tagMap.put(tempArray[0], set);
+					}
+					else
+						set = tagMap.get(tempArray[0]);
+					set.add(temp2);
+				}
+			}
+			
+		}
+		// sort the map based on key field
+		Map<String, Set<String>> sortedTagMap = new TreeMap<String, Set<String>>(tagMap);
+		for(Map.Entry<String, Set<String>> entry : sortedTagMap.entrySet())
+		{
+			Set<String> set = entry.getValue();
+			Set<String> sortedSet = new TreeSet<String>(set);
+			StringBuffer strbuff = new StringBuffer();
+			strbuff.append(entry.getKey()+":");
+			if(!sortedSet.isEmpty())
+			{
+				for(String item : sortedSet)
+					strbuff.append(item+",");
+				strbuff.deleteCharAt(strbuff.length() - 1);
+			}
+			System.out.println(strbuff.toString());
+		}
+		
+	}
+}
