@@ -1,0 +1,46 @@
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Solution{
+
+
+	public static void main(String[] args) {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+		
+		Scanner in = new Scanner(System.in);
+		int n = Integer.parseInt(in.nextLine());
+		String string;
+		String regexOnlyTag = "[<][^>]+";
+		String regexATag = "[\\[]";
+		Pattern tagPattern = Pattern.compile(regexOnlyTag);
+		Set<String> tagSet = new HashSet<String>();
+		for (int i = 0; i < n; i++)
+		{
+			string = in.nextLine();
+			Matcher tagMatcher = tagPattern.matcher(string);
+			while(tagMatcher.find())
+			{
+				String temp = string.substring(tagMatcher.start(), tagMatcher.end());
+				temp = temp.trim();
+				temp = temp.replaceAll("[<|>|/]", "");
+				String[] temparr = temp.split(" ");
+				String tempNew = temparr[0].trim();
+				tagSet.add(tempNew);
+			}
+			if(string.contains("["))
+				tagSet.add("a");
+		}
+		// sort the map based on key field
+		Set<String> sortedSet = new TreeSet<String>(tagSet);
+		StringBuffer strbuff = new StringBuffer();
+		for(String item : sortedSet)
+			strbuff.append(item + ";");
+		strbuff.deleteCharAt(strbuff.length() - 1);
+		System.out.println(strbuff.toString());
+		
+	}
+}
