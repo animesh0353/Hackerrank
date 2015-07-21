@@ -1,0 +1,104 @@
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Solution{
+
+	
+	public static void sumarry(String string, ArrayList<String> arrSummary) {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+		
+		String regexOnlyTag = "[<][\\W]*div[\\W]*class[\\W]*=[\\W]*summary[\\W]*[>][\\W]*[<][\\W]*[\\w]*[\\W]*[>][\\W]*"
+				+ "[<][\\W]*+[a][\\W]*href=\"[\\W]*[^>][^<]+";
+		String regexHTML = "[>][^>]*[<][\\W]*[/][\\W]*[a|b|h|H][\\w]{0,1}[\\W]*[>]";
+		String regexATag = "[\\[]";
+		Pattern tagPattern = Pattern.compile(regexOnlyTag);
+		Pattern htmlPattern = Pattern.compile(regexHTML);
+		Set<String> tagSet = new HashSet<String>();
+		
+			Matcher tagMatcher = tagPattern.matcher(string);
+			Matcher htmlMatcher = htmlPattern.matcher(string);
+			while(tagMatcher.find())
+			{
+				String temp = string.substring(tagMatcher.start(), tagMatcher.end());
+				temp = temp.trim();
+				String[] temparr = temp.split(">");
+				String tempNew = temparr[temparr.length-1].trim();
+				arrSummary.add(tempNew);
+			}
+	}
+
+	public static void main(String[] args) throws IOException {
+		/* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+
+		ArrayList<String> arrQuestionId = new ArrayList<String>();
+		ArrayList<String> arrSummary = new ArrayList<String>();
+		ArrayList<String> arrTime = new ArrayList<String>();
+
+				Scanner in = new Scanner(System.in);
+		String string;
+		String regexOnlyTag = "[<][\\W]*div[\\W]*class=\"question-summary\"[^>]*";
+		String regexHTML = "id[^>]*";
+		String regexATag = "=";
+
+		String regexTime = "asked[\\W]*<[\\W]*span[^/]*";
+		String regexExactTime = ">[\\W]*[^<]*";
+
+		Pattern tagPattern = Pattern.compile(regexOnlyTag);
+		Pattern htmlPattern = Pattern.compile(regexHTML);
+
+		Pattern timePattern = Pattern.compile(regexTime);
+		Pattern exactTimePattern = Pattern.compile(regexExactTime);
+
+		StringBuffer strbuff = new StringBuffer();
+		
+				while( in.hasNextLine())
+				{
+					string = in.nextLine();
+					strbuff.append(string + "\n");
+				}
+				string = strbuff.toString();
+		Matcher tagMatcher = tagPattern.matcher(string);
+
+		while(tagMatcher.find())
+		{
+			String temp = string.substring(tagMatcher.start(), tagMatcher.end());
+			temp = temp.trim();
+			Matcher htmlMatcher = htmlPattern.matcher(temp);
+			while(htmlMatcher.find())
+			{
+				String quetionId = temp.substring(htmlMatcher.start(), htmlMatcher.end());
+				String[] idArr = quetionId.split(regexATag);
+				idArr[1] = idArr[1].replaceAll("\"", "").trim();
+				String[] id = idArr[1].split("-");
+				arrQuestionId.add(id[2].trim());
+			}
+		}
+
+		String summaryString = string;
+		sumarry(summaryString, arrSummary);
+		
+		String timeString = string;
+		Matcher timeMatcher = timePattern.matcher(timeString);
+		while(timeMatcher.find())
+		{
+			String time = timeString.substring(timeMatcher.start(), timeMatcher.end());
+			Matcher timeMatcher2 = exactTimePattern.matcher(time);
+			if(timeMatcher2.find())
+			{
+				String exactTime = time.substring(timeMatcher2.start(), timeMatcher2.end());
+				exactTime = exactTime.replaceAll("[<|>]", "");
+				exactTime = exactTime.trim();
+				arrTime.add(exactTime);
+			}
+		}
+		
+		for (int i = 0; i < arrQuestionId.size(); i++)
+			System.out.println(arrQuestionId.get(i)+";"+arrSummary.get(i)+";"+arrTime.get(i));
+	}
+}
