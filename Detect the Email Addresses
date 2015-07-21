@@ -1,0 +1,45 @@
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+public class Solution{
+
+	public static void main(String[] args)
+	{
+		Scanner in = new Scanner(System.in);
+		int n = Integer.parseInt(in.nextLine());
+		
+		Set<String> set = new HashSet<String>();
+		ArrayList<String> emailList = new ArrayList<String>();
+		String regex = "[\\w|_|.]+[@][\\w]+([\\.][\\w]+)+";
+		Pattern pattern = Pattern.compile(regex);
+		String string;
+		for (int i = 0; i < n; i++) 
+		{
+			string = in.nextLine();
+			Matcher matcher = pattern.matcher(string);
+			while(matcher.find())
+			{
+				String tempEmail = string.substring(matcher.start(), matcher.end());
+				set.add(tempEmail.trim());
+			}
+		}
+		emailList.addAll(set);
+		Collections.sort(emailList);
+		StringBuffer strbuff = new StringBuffer();
+		for(String email : emailList)
+			strbuff.append(email+";");
+		if(strbuff.length() > 1)
+		{
+			strbuff.deleteCharAt(strbuff.length() - 1);
+			System.out.println(strbuff.toString());
+		}
+	}
+	
+}
