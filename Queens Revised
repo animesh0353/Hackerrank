@@ -1,0 +1,183 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution{
+	public static int n = 21;
+
+	// Function to print the column in which queen are placed
+	public static void printFun(int[][] board)
+	{
+//		for (int i = 0; i < n; i++)
+//		{
+//			for (int j = 0; j <n; j++)
+//				if(board[i][j] == 1)
+//					System.out.print("Q ");
+//				else
+//					System.out.print("* ");
+////					System.out.print(j+1+" ");
+//			System.out.println();
+//		}
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j <n; j++)
+				if(board[i][j] == 1)
+					System.out.print(j+1+" ");
+		System.out.println();
+	}
+	
+	
+	public static boolean isSafe(int[][] board, int row, int col)
+	{
+		// for column 
+		for (int i = 0; i <= row; i++) 
+			if(board[i][col] == 1)
+				return false;
+		
+		// for upper left corner 
+		for (int i = row, j = col; i >= 0 && j>=0; i--, j--)
+			if(board[i][j] == 1)
+				return false;
+		
+		// for upper right corner
+		for (int i = row, j = col; i >= 0 && j < n; i--, j++)
+			if(board[i][j] == 1)
+				return false;
+		
+		
+		
+		// check for straight line going left upper
+		for (int k = 2; k <= row  || k <= col; k++) {
+			for (int r = 1; r < k; r++) 
+			{
+				
+			
+			int counterLD = 1, counterLU = 1;
+			// for row and col in left upperside lower L
+			for (int i = row-r, j=col-k; i >=0 && j>=0; i= i-r,j=j-k) 
+				if(board[i][j] == 1)
+					if(counterLD < 2)
+						counterLD++;
+					else
+						return false;
+			
+			// for row and col in left upperside upper L
+			for (int i = row-k, j=col-r; i >=0 && j>=0; i=i-k,j=j-r) 
+				if(board[i][j] == 1)
+					if(counterLU < 2)
+						counterLU++;
+					else
+						return false;
+			}
+		}
+		
+		// check for straight line
+		for (int k = 2; k <= row || k +col < n; k++) {
+			for (int r = 1; r < k; r++) 
+			{
+			int counterRD = 1, counterRU = 1;
+			// for row and col in right upperside lower L
+			for (int i = row-r, j=col+k; i >=0 && j<n; i=i-r,j=j+k) 
+				if(board[i][j] == 1)
+					if(counterRD < 2)
+						counterRD++;
+					else
+						return false;
+
+			// for row and col in left upperside upper L
+			for (int i = row-k, j=col+r; i >=0 && j<n; i=i-k,j=j+r) 
+				if(board[i][j] == 1)
+					if(counterRU < 2)
+						counterRU++;
+					else
+						return false;
+			}
+		}
+		
+		
+		// if all condition satisfies then return true
+		return true;
+	}
+	
+	public static boolean isSafeStraightLine(int[][] board, int row, int col)
+	{
+		int counter = 0;
+		
+		// check for straight line going left upper
+		for (int k = 2; k <= row  || k <= col; k++) {
+			// for row and col in left upperside lower L
+			for (int i = row-1, j=col-k; i >=0 && j>=0; i--,j=j-k) 
+				if(board[i][j] == 1)
+					if(counter < 3)
+						counter++;
+					else
+						return false;
+			
+			// for row and col in left upperside upper L
+			for (int i = row-k, j=col-1; i >=0 && j>=0; i=i-k,j--) 
+				if(board[i][j] == 1)
+					if(counter < 3)
+						counter++;
+					else
+						return false;
+		}
+		
+		// check for straight line
+		for (int k = 2; k <= row || k +col < n; k++) {
+			// for row and col in right upperside lower L
+			for (int i = row-1, j=col+k; i >=0 && j<n; i--,j=j+k) 
+				if(board[i][j] == 1)
+					if(counter < 3)
+						counter++;
+					else
+						return false;
+
+			// for row and col in left upperside upper L
+			for (int i = row-k, j=col+1; i >=0 && j<n; i=i-k,j++) 
+				if(board[i][j] == 1)
+					if(counter < 3)
+						counter++;
+					else
+						return false;
+		}
+		
+		
+		// if all condition satisfies then return true
+		return true;
+	}
+	
+	public static boolean nQueen(int[][] board, int row)
+	{
+		if(row >= n)
+			return true;
+		
+		
+		for (int i = 0; i < n; i++)
+		{
+			
+			if(isSafe(board, row, i))
+			{
+				board[row][i] = 1;
+//				printFun(board);
+				if(nQueen(board, row+1))
+					return true;
+			}
+			board[row][i] = 0;
+		}
+		return false;
+	}
+	
+	public static void main(String[] args)
+	{
+        System.out.println(n);
+		int[][] board = new int[n][n];
+		if(nQueen(board, 0))
+			printFun(board);
+		else
+			System.out.println("Not possible");
+		
+		
+	}
+	
+}
