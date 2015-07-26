@@ -1,0 +1,78 @@
+import java.util.Scanner;
+
+public class Solution{
+
+	
+	public static int perimeterFunc(char[][] grid, int[][] sum, int n, int m)
+	{
+
+		// perimter of size
+		int maxPerimeter = 0;
+		
+		
+		// give initial value to the perimeter of first row
+		for (int i = 0; i < m; i++) 
+		{
+			for (int j = i+1; j < m; j++) 
+			{
+				int p = -1;
+				for (int k = 0; k < n; k++)
+				{
+					if( (sum[k][j] - ((i==0)?0:sum[k][i-1])) == 0)
+					{
+						if( p >= 0)
+						{
+							int temp = 2*(k-p + j-i);
+							if(temp > maxPerimeter)
+								maxPerimeter = temp;
+						}
+						else if(p == -1)
+							 	p = k;
+					}
+					else
+					{
+						if(grid[k][i] == 'x' || grid[k][j]== 'x' )
+							p = -1;
+					}
+				}
+			}
+		}
+		
+		return maxPerimeter;
+	}
+	
+	public static void main(String[] args)
+	{
+		Scanner in = new Scanner(System.in);
+		String string = in.nextLine();
+		String[] str = string.split(" ");
+		int n = Integer.parseInt(str[0]);
+		int m = Integer.parseInt(str[1]);
+		char[][] grid = new char[n+1][m+1];
+
+		
+		int[][] sum = new int[n+1][m+1];
+		
+		
+		
+		// read the ground into grid
+		for (int i = 0; i < n; i++)
+		{
+			string = in.nextLine();
+			
+			grid[i] = string.toCharArray();
+			for (int j = 0; j < m; j++) {
+				if(grid[i][j] == 'x')
+					sum[i][j] = ((j==0)?0:sum[i][j-1]) + 1;
+				else
+					sum[i][j] = (j==0)?0:sum[i][j-1];
+			}
+			
+		}
+		long val = perimeterFunc(grid, sum, n, m);
+		if(val == 0)
+			System.out.println("impossible");
+		else
+			System.out.println(val);
+	}
+}
