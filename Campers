@@ -1,0 +1,33 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+    	
+    	Scanner in = new Scanner(System.in);
+    	String string = in.nextLine();
+    	String[] str = string.split(" ");
+    	int n = Integer.parseInt(str[0]);
+    	int k = Integer.parseInt(str[1]);
+    	string = in.nextLine();
+    	str = string.split(" ");
+    	int[] arr = new int[k];
+    	for (int i = 0; i < k; i++)
+    		arr[i] = Integer.parseInt(str[i]);
+    	Arrays.sort(arr);
+    	int counter = 0;
+    	for (int i = 0; i < k; i++) {
+			if(i==0)
+				counter += Math.ceil((arr[i]-2)/2.0);
+			else
+			{
+				counter += Math.ceil((arr[i] - arr[i-1] -3)/2.0);
+			}
+		}
+    	counter += Math.ceil((n - arr[k-1]-1)/2.0) + k;
+    	
+        System.out.println(counter);
+    }
+}
