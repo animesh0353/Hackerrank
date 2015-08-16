@@ -1,0 +1,48 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
+
+public class Solution {
+	public static int permuation = 0;
+	public static int original = 0;
+	public static Set<String> set = new HashSet<String>();
+	public static void stackPermutation(String string, int index, String temp, int n, Stack<Character> stk)
+	{
+		if(temp.length()>n)
+			return;
+		if(index == n)
+		{
+			while(!stk.isEmpty())
+				temp = temp + stk.pop();
+			if(!set.contains(temp))
+			{
+				permuation++;
+				set.add(temp);
+			}
+			if(string.equals(temp))
+				original++;
+			return;
+		}
+		stk.add(string.charAt(index));
+		Stack<Character> stkTemp = (Stack<Character>)stk.clone();
+		stackPermutation(string, index+1, temp, n, stkTemp);
+		stk.pop();
+		if(!stk.isEmpty())
+		{
+			temp = temp + stk.pop();
+			stackPermutation(string, index, temp, n, stk);
+		}
+	}
+
+    public static void main(String[] args) throws IOException {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+    	BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    	String string = in.readLine();
+    	Stack<Character> stk = new Stack<Character>();
+    	stackPermutation(string, 0, "", string.length(), stk);
+    	System.out.println(original+" "+permuation);
+    }
+}
