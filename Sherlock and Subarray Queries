@@ -1,0 +1,97 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Solution {
+	public static class Segment
+	{
+		int max;
+		int count;
+		public Segment(int max, int count) 
+		{
+			this.max = max;
+			this.count = count;
+		}
+	}
+	
+	public static void segmentTree(int[] arr, int ss, int se, Segment[] segment, int node)
+	{
+		if(ss == se)
+		{
+			segment[node] = new Segment(arr[ss], 1);  
+			return;
+		}
+		int mid = (ss + se)/2;
+		
+		segmentTree(arr, ss, mid, segment, 2*node+1);
+		segmentTree(arr, mid+1, se, segment, 2*node+2);
+		if(segment[2*node+1].max > segment[2*node+2].max)
+			segment[node]= new Segment(segment[2*node+1].max,segment[2*node+1].count);
+		else
+			if(segment[2*node+1].max < segment[2*node+2].max)
+				segment[node]= new Segment(segment[2*node+2].max,segment[2*node+2].count);
+			else
+				segment[node]= new Segment(segment[2*node+2].max,segment[2*node+2].count + segment[2*node+1].count);
+	}
+	
+	public static class Pair
+	{
+		int max;
+		int count;
+		public Pair(int max, int count) {
+			// TODO Auto-generated constructor stub
+			this.max = max;
+			this.count = count;
+		}
+	}
+	public static Pair querySegment(Segment[] segment, int ss, int se, int qs, int qe, int node)
+	{
+		if(qs<=ss && se<=qe)
+			return new Pair(segment[node].max, segment[node].count);
+		if(qe<ss || qs>se)
+			return new Pair(Integer.MIN_VALUE, 1);
+		int mid = (ss + se)/2;
+		Pair p1 = querySegment(segment, ss, mid, qs, qe, 2*node+1);
+		Pair p2 = querySegment(segment, mid+1, se, qs, qe, 2*node+2);
+		if(p1.max > p2.max)
+			return p1;
+		else
+			if(p2.max > p1.max)
+				return p2;
+			else
+				return new Pair(p1.max, p1.count+p2.count);
+	}
+	
+	public static int log(int x, int base)
+	{
+	    return (int) Math.ceil((Math.log(x) / Math.log(base)));
+	}
+
+	public static void main(String[] args) throws IOException
+	{
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		String string = in.readLine();
+		String[]str = string.split(" ");
+		int n = Integer.parseInt(str[0]);
+		int query = Integer.parseInt(str[1]);
+		int[] arr = new int[n];
+		string = in.readLine();
+		str = string.split(" ");
+		for (int i = 0; i < n; i++)
+			arr[i] = Integer.parseInt(str[i]);
+		
+		int size = log(n, 2);
+		size = 2*(int)Math.pow(2, size) - 1;
+		Segment[] segment = new Segment[size];
+		segmentTree(arr, 0, n-1, segment, 0);
+		for (int i = 0; i < query; i++) {
+			string = in.readLine();
+			str = string.split(" ");
+			int qs = Integer.parseInt(str[0]) -1;
+			int qe = Integer.parseInt(str[1]) - 1;
+			Pair pair = querySegment(segment, 0, n-1, qs, qe, 0);
+			System.out.println(pair.count);
+		}
+		
+	}
+}
