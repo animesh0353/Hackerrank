@@ -1,0 +1,104 @@
+/**
+ * Red John has committed another murder. But this time, he doesn't leave a red smiley behind. What he leaves behind is a puzzle for Patrick Jane to solve. He also texts Teresa Lisbon that if Patrick is successful, he will turn himself in. The puzzle begins as follows.
+There is a wall of size 4xN in the victim's house. The victim also has an infinite supply of bricks of size 4x1 and 1x4 in her house. There is a hidden safe which can only be opened by a particular configuration of bricks in the wall. In every configuration, the wall has to be completely covered using the bricks. There is a phone number written on a note in the safe which is of utmost importance in the murder case. Gale Bertram wants to know the total number of ways in which the bricks can be arranged on the wall so that a new configuration arises every time. He calls it M. Since Red John is back after a long time, he has also gained a masters degree in Mathematics from a reputed university. So, he wants Patrick to calculate the number of prime numbers (say P) up to M (i.e. <= M). If Patrick calculates P, Teresa should call Red John on the phone number from the safe and he will surrender if Patrick tells him the correct answer. Otherwise, Teresa will get another murder call after a week.
+You are required to help Patrick correctly solve the puzzle.
+
+Input Format
+
+The first line of input will contain an integer T followed by T lines each containing an integer N.
+
+Output Format
+
+Print exactly one line of output for each test case. The output should contain the number P.
+
+Constraints
+1<=T<=20
+1<=N<=40
+
+Sample Input
+
+2
+1
+7
+
+Sample Output
+
+0
+3
+ */
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Solution 
+{
+	private Scanner in;
+	
+	
+	public Solution()
+	{
+		in = new Scanner(System.in);
+		
+	}
+	
+	public void run()
+	{
+		int testCases = in.nextInt();
+		for(int test=0; test<testCases; test++)
+		{
+			int n = in.nextInt();
+			if(n < 4)
+			{
+				System.out.println(0);
+				continue;
+			}
+			// solve if n >= 4
+			int[] dp = new int[n+1];
+			dp[0] = 0;
+			dp[1] = 1;
+			dp[2] = 1;
+			dp[3] = 1;
+			dp[4] = 2;
+			func(dp, n);
+			System.out.println(primesCount(dp[n]));
+		}
+	}
+	
+	public int primesCount(int n)
+	{
+		if(n<2)
+			return 0;
+		boolean[] prime = new boolean[n+1];
+		Arrays.fill(prime, true);
+		prime[0] = false; // mark 0 as non - prime number
+		prime[1] = false; // mark 1 ass non- prime number
+		// logic is any starting true marked boolean is prime 2 3 5 so on
+		int count = 0; // count the number of prime till n;
+		for(int i=2; i<=n; i++)
+		{
+			if(prime[i])
+			{
+				count++;
+				for(int j=2; j<=n/i; j++)
+					prime[j*i] = false;
+			}
+		}
+		return count;
+		
+			
+	}
+	// function to find the number of bricks required using dynamic programming
+	public int func(int[] dp, int n)
+	{
+		if(dp[n] > 0)
+			return dp[n];
+		
+		dp[n] = func(dp, n-1) + ((n>3)?func(dp,n-4):0);
+		return dp[n];
+	}
+	
+	public static void main(String[] args)
+	{
+		Solution solution = new Solution();
+		solution.run();
+	}
+}
