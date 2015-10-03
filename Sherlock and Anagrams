@@ -1,0 +1,222 @@
+/**
+ * Problem Statement
+
+Given a string S, find the number of unordered anagramic pairs of substrings.
+
+Input Format
+
+First line contains T, the number of testcases. Each testcase consists of string S in one line.
+
+Constraints 
+1≤T≤10 
+2≤length(S)≤100 
+String S contains only the lowercase letters of the English alphabet.
+
+Output Format
+
+For each testcase, print the required answer in one line.
+
+Sample Input
+
+2
+abba
+abcd
+Sample Output
+
+4
+0
+Explanation
+
+Let's say S[i,j] denotes the substring Si,Si+1,⋯,Sj.
+
+testcase 1: 
+For S=abba, anagramic pairs are: {S[1,1],S[4,4]}, {S[1,2],S[3,4]}, {S[2,2],S[3,3]} and {S[1,3],S[2,4]}.
+
+testcase 2: 
+No anagramic pairs.
+ */
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Map;
+
+public class SAA {
+	static InputStream is;
+	static PrintWriter out;
+	static String INPUT = "";
+
+	static void solve()
+	{
+		int n = ni();
+		for(int i = 0;i <n;i++)
+		{
+			char[] s = ns().toCharArray();
+			int H = 1000000009;
+			long ret = 0;
+			for(int len = 1;len <= s.length;len++)
+			{
+				Map<Long, Integer> map = new HashMap<Long, Integer>();
+				for(int j = 0;j+len-1 < s.length;j++)
+				{
+					int[] f = new int[26];
+					for(int k = j;k < j+len;k++)
+					{
+						f[s[k]-'a']++;
+					}
+					long h = 0;
+					for(int k = 0;k < 26;k++)
+					{
+						h = h * H + f[k];
+					}
+					if(!map.containsKey(h))map.put(h, 0);
+					map.put(h, map.get(h)+1);
+				}
+
+				for(int v : map.values())
+				{
+					ret += (long)v*(v-1)/2;
+				}
+			}
+			out.println(ret);
+		}
+	}
+
+	public static void main(String[] args) throws Exception
+	{
+		long S = System.currentTimeMillis();
+		is = INPUT.isEmpty() ? System.in : new ByteArrayInputStream(INPUT.getBytes());
+		out = new PrintWriter(System.out);
+
+		solve();
+		out.flush();
+		long G = System.currentTimeMillis();
+		tr(G-S+"ms");
+	}
+
+	private static boolean eof()
+	{
+		if(lenbuf == -1)return true;
+		int lptr = ptrbuf;
+		while(lptr < lenbuf)if(!isSpaceChar(inbuf[lptr++]))return false;
+
+		try {
+			is.mark(1000);
+			while(true){
+				int b = is.read();
+				if(b == -1){
+					is.reset();
+					return true;
+				}else if(!isSpaceChar(b)){
+					is.reset();
+					return false;
+				}
+			}
+		} catch (IOException e) {
+			return true;
+		}
+	}
+
+	private static byte[] inbuf = new byte[1024];
+	static int lenbuf = 0, ptrbuf = 0;
+
+	private static int readByte()
+	{
+		if(lenbuf == -1)throw new InputMismatchException();
+		if(ptrbuf >= lenbuf){
+			ptrbuf = 0;
+			try { lenbuf = is.read(inbuf); } catch (IOException e) { throw new InputMismatchException(); }
+			if(lenbuf <= 0)return -1;
+		}
+		return inbuf[ptrbuf++];
+	}
+
+	private static boolean isSpaceChar(int c) { return !(c >= 33 && c <= 126); }
+	private static int skip() { int b; while((b = readByte()) != -1 && isSpaceChar(b)); return b; }
+
+	private static double nd() { return Double.parseDouble(ns()); }
+	private static char nc() { return (char)skip(); }
+
+	private static String ns()
+	{
+		int b = skip();
+		StringBuilder sb = new StringBuilder();
+		while(!(isSpaceChar(b))){ // when nextLine, (isSpaceChar(b) && b != ' ')
+			sb.appendCodePoint(b);
+			b = readByte();
+		}
+		return sb.toString();
+	}
+
+	private static char[] ns(int n)
+	{
+		char[] buf = new char[n];
+		int b = skip(), p = 0;
+		while(p < n && !(isSpaceChar(b))){
+			buf[p++] = (char)b;
+			b = readByte();
+		}
+		return n == p ? buf : Arrays.copyOf(buf, p);
+	}
+
+	private static char[][] nm(int n, int m)
+	{
+		char[][] map = new char[n][];
+		for(int i = 0;i < n;i++)map[i] = ns(m);
+		return map;
+	}
+
+	private static int[] na(int n)
+	{
+		int[] a = new int[n];
+		for(int i = 0;i < n;i++)a[i] = ni();
+		return a;
+	}
+
+	private static int ni()
+	{
+		int num = 0, b;
+		boolean minus = false;
+		while((b = readByte()) != -1 && !((b >= '0' && b <= '9') || b == '-'));
+		if(b == '-'){
+			minus = true;
+			b = readByte();
+		}
+
+		while(true){
+			if(b >= '0' && b <= '9'){
+				num = num * 10 + (b - '0');
+			}else{
+				return minus ? -num : num;
+			}
+			b = readByte();
+		}
+	}
+
+	private static long nl()
+	{
+		long num = 0;
+		int b;
+		boolean minus = false;
+		while((b = readByte()) != -1 && !((b >= '0' && b <= '9') || b == '-'));
+		if(b == '-'){
+			minus = true;
+			b = readByte();
+		}
+
+		while(true){
+			if(b >= '0' && b <= '9'){
+				num = num * 10 + (b - '0');
+			}else{
+				return minus ? -num : num;
+			}
+			b = readByte();
+		}
+	}
+
+	private static void tr(Object... o) { if(INPUT.length() != 0)System.out.println(Arrays.deepToString(o)); }
+}
