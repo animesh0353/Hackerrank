@@ -1,0 +1,121 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class InterpolationSearch {
+	public int Isearch(int a[], int x)
+	{
+		int l=0;
+		int h=a.length;
+		while(l<h)
+		{
+			int i=l+((x-a[l])*(h-l)/(a[h-1]-a[l]));
+			if(a[i]==x) return i;
+			else if(a[i]<x) l=i+1;
+			else h=i;
+		}
+		return -1;
+	}
+
+	// largest value <= key
+	// Invariant: A[l] <= key and A[r] > key
+	// Boundary: |r - l| = 1
+	// Input: A[l .... r-1]
+	// Precondition: A[l] <= key <= A[r]
+	int Floor(int A[], int l, int r, int key)
+	{
+		int m;
+
+		while( l <= r )
+		{
+			m = l + (r - l)/2;
+
+			if( A[m] == key || (A[m] < key && key < A[m+1] ))
+				return m;
+			if( A[m] < key)
+				l = m+1;
+			else
+				r = m-1;
+		}
+
+		return A[l];
+	}
+
+	// Initial call
+	double Floor(int A[], int size, int key, double[] ucost)
+	{
+		// Add error checking if key < A[0]
+		int j;
+		if( key < A[0] )
+			j = -1;
+		else
+		{
+			if(key > A[size])
+				j = size;
+			else
+				j =  Floor(A, 0, size, key);
+		}
+
+		if(A[j] == key)
+			return ucost[j];
+		
+		int first = 0;
+		int second = 0;
+
+		if(j == -1)
+		{
+			first = 0;
+			second = 1;
+		}
+		else
+		{
+			if(j == A.length-1)
+			{
+				first = A.length-2;
+				second = A.length-1;
+			}
+			else
+			{
+				first = j;
+				second = j+1;
+			}
+		}
+		double C1_2 = Math.abs(A[first] - A[second]);
+		double U1_2 = ucost[first] - ucost[second];
+		double key_First = key - A[first];
+		double keyDC1_2 = key_First/C1_2;
+		double result = ucost[first] - keyDC1_2*U1_2;
+//		double val = Math.abs(ucost[second] - ucost[first])/(A[second] - A[first]);
+		return result;
+			
+	}
+
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter the number of elements");
+		int n=sc.nextInt();
+		int a[]=new int[n];
+		System.out.println("Enter the elements");
+		for(int i=0;i<n;i++)
+		{
+			a[i]=sc.nextInt();
+		}
+		double ucost[] = new double[n];
+		for(int i=0;i<n;i++)
+		{
+			ucost[i]=sc.nextDouble();
+		}
+		Arrays.sort(a);
+		System.out.println("Enter the element to be searched");
+		int k=sc.nextInt();
+		InterpolationSearch b=new InterpolationSearch();
+		//		int j=b.Isearch(a, k);
+		double j = b.Floor(a, a.length-1, k, ucost);
+		//		System.out.println("The position of the number is "+(j+1));
+		System.out.println("The position of the number is "+j);
+
+
+	}
+
+}
