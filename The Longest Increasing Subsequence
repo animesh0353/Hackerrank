@@ -1,0 +1,86 @@
+/**
+ * Problem Statement
+
+An Introduction to the Longest Increasing Subsequence Problems
+
+The task is to find the length of the longest subsequence in a given array of integers such that all elements of the subsequence are sorted in ascending order. For example, the length of the LIS for { 15, 27, 14, 38, 26, 55, 46, 65, 85 } is 6 and the longest increasing subsequence is {15, 27, 38, 55, 65, 85}. 
+
+Here's a great Youtube video of a lecture from MIT's Open-Coursware, covering the topic. 
+
+Here is one approach which solves this in quadratic time using dynamic programming. A more efficient algorithm which solves the problem in N Log N time
+In this challenge you simply have to find the length of the longest strictly increasing sub-sequence of the given sequence.
+
+Input Format
+
+In the first line of input, there is a single number N. 
+In the next N lines input the value of a[i].
+
+Constraints 
+1 ≤ N ≤ 106 
+1 ≤ a[i] ≤ 105
+
+Output Format
+
+In a single line, output the length of the longest increasing sub-sequence.
+
+Sample Input
+
+5
+2
+7
+4
+3
+8
+Sample Output
+
+3
+Explanation
+
+{2,7,8} is the longest increasing sub-sequence, hence the answer is 3 (the length of this sub-sequence).
+
+
+ */
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        int[] arr1 = new int[n+1];
+        int[] arr_M = new int[n+1];
+        int[] arr_P = new int[n+1];
+       
+        for (int i = 0; i < n; i++) {
+			arr1[i] = in.nextInt();
+			
+		}
+        int max = 0;
+        int newMax;
+        for (int i = 0; i < n; i++) {
+        	int low = 1;
+        	int high = max;
+        	while(low <= high)
+        	{
+        		int mid = (int) Math.ceil((low + high)/2);
+        		if(arr1[arr_M[mid]] < arr1[i] )
+        			low = mid + 1;
+        		else
+        			high = mid - 1;
+        	}
+        	newMax= low;
+        	arr_P[i] = arr_M[newMax-1];
+        	arr_M[newMax] = i;
+        	if(newMax> max)
+        		max = newMax;
+        }
+     
+        
+       System.out.println(max);
+    }
+}
