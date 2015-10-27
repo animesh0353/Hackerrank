@@ -1,0 +1,113 @@
+/*
+ * 
+
+Problem Statement
+
+You have 4 types of lego blocks, of sizes (1 x 1 x 1), (1 x 1 x 2), (1 x 1 x 3), and (1 x 1 x 4). Assume that you have an infinite number of blocks of each type.
+
+Using these blocks, you want to make a wall of height N and width M. The wall should not have any holes in it. The wall you build should be one solid structure. A solid structure can be interpreted in one of the following ways:
+(1)It should not be possible to separate the wall along any vertical line without cutting any lego block used to build the wall.
+(2)You cannot make a vertical cut from top to bottom without cutting one or more lego blocks.
+
+The blocks can only be placed horizontally. In how many ways can the wall be built?
+
+Input:
+The first line contains the number of test cases T. T test cases follow. Each case contains two integers N and M.
+
+Output:
+Output T lines, one for each test case containing the number of ways to build the wall. As the numbers can be very large, output the result modulo 1000000007.
+
+Constraints:
+1 <= T <= 100
+1 <= N,M <= 1000
+
+Sample Input:
+4
+2 2
+3 2
+2 3
+4 4
+
+Sample Output:
+3
+7
+9
+3375
+
+Explanation:
+For the first case, we can have
+
+    two (1 * 1 * 2) lego blocks stacked one on top of another.
+    one (1 * 1 * 2) block stacked on top of two (1 * 1 * 1) blocks.
+    two (1 * 1 * 1) blocks stacked on top of one (1 * 1 * 2) block.
+
+For the second case, each row of the wall can contain either two blocks of width 1, or one block of width 2. However, the wall where all rows contain two blocks of width 1 is not a solid one as it can be divided vertically. Thus, the number of ways is 2 * 2 * 2 - 1 = 7.
+
+ */
+
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution2 {
+
+    public static long mod = 1000000007;
+    public static long modpow(long a, long n, long mod)
+	{
+		long ret = 1;
+		long mul = a;
+		for(;n > 0;n >>>= 1){
+			if((n&1)==1){
+				ret = (ret * mul) % mod;
+			}
+			mul = (mul * mul) % mod;
+		}
+		return ret;
+	}
+    
+    
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner in = new Scanner(System.in);
+        long[] f = new long[10001];
+        long[] g = new long[10001];
+        long[] h = new long[10001];
+        
+        // fill values for f array
+        f[0] = 1;
+        for(int i=1;i<=1000;i++)
+        {
+            for(int j=1;j<=4;j++)
+                if(i-j >= 0)
+                    f[i] = (f[i] + f[i-j])%mod;
+        }
+        
+        int t = in.nextInt();
+        for(; t>0; t--)
+        {
+            int n = in.nextInt();
+            int m = in.nextInt();
+            for(int i=1;i<=m;i++)
+            {
+                g[i] = modpow(f[i],n,mod);
+//                System.out.println(g[i]);
+            }
+            
+            h[1] = 1;
+            for(int i=2; i<=m; i++)
+            {
+                h[i] = g[i];
+                long temp = 0;
+                for(int j=1; j<i; j++)
+                {
+                    temp = (temp + h[j]*g[i-j])%mod;
+                    
+                }
+                h[i] = (h[i] - temp + mod)%mod;
+            }
+            System.out.println(h[m]);
+        }
+    }
+}
