@@ -1,0 +1,199 @@
+/**
+ * 
+ * Coding Camp For Girls
+
+Julia started a coding camp for girls. There are N girls in the camp. These girls are allotted unique IDs (1≤ID≤N) based on their coding skills.
+
+Julia scheduled a coding competition for the camp girls, but she needed help deciding the seating arrangement to prevent cheating. She asked her friend Samantha to help her.
+
+Samantha asked her to select some ranges [L, R] iteratively and then draw a circle to represent all the IDs in that range as points on the circumference of the drawn circle. If the previously selected range [Lp, Rp] is sub-range of the currently selected range, then she has to draw a bigger circle that inscribes the circle of the previous range [Lp, Rp]. Julia selects ranges in such a way that the same ID is never represented on two circles and, also, the circles never intersect.
+
+If, for any ID_(K) girl, there is an ID_(K + 1) girl on the immediate inner-circle or outer-circle, then the two girls are considered to be a strong pair and can easily cheat during the competition.
+
+Help Julia to find all the strong pairs, so that she can prevent cheating.
+
+Input Format
+
+The first line of input consists of two integers N and M. N is the total number of girls in the coding camp, and M is the number of different ranges Julia selects in order to get the seating arrangement done as instructed by Samantha.
+
+Each of the next M lines consists of two integers L and R denoting the ranges selected by Julia.
+
+Constraints
+
+2≤N≤107
+1≤M≤min(15, N), where min(x, y) is minimum of x and y.
+1≤L, R≤N
+L≤R
+Output Format
+
+Print the total number of strong pairs C on the first line, followed by listing the strong pairs in increasing order, one pair per line.
+
+If there are no strong pairs then print 0.
+
+Sample Input 1
+
+8 3
+4 6
+2 7
+1 8
+Sample Output 1
+
+4
+1 2
+3 4
+6 7
+7 8
+Explanation
+
+There are 8 girls in the camp, and Julia selects 3 ranges randomly:
+
+[4, 6]: IDs {4, 5, 6} are represented on Circle1.
+[2, 7]: As previously selected range [4, 6] is sub-range to [2, 7], so Circle1 is inscribed in Circle2 and Circle2 represents only the IDs {2, 3, 7}.
+[1, 8]: Here Circle1 and Circle2 both will be inscribed in Circle3 because [4, 6] and [2, 7] are sub-ranges to [1, 8] and Circle3 represents only the IDs {1, 8}.
+
+
+
+It can be observed that:
+
+For ID_1 girl, there is ID_2 girl on immediate inner-circle.
+For ID_3 girl, there is ID_4 girl on immediate inner-circle.
+For ID_6 girl, there is ID_7 girl on immediate outer-circle.
+For ID_7 girl, there is ID_8 girl on immediate outer-circle.
+
+Sample Input 2
+
+8 3
+6 7
+2 4
+1 8
+Sample Output 2
+
+4
+1 2
+4 5
+5 6
+7 8
+Explanation
+
+
+ * 
+ */
+
+
+
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+    
+
+	
+
+	static int find_nxt(int x, int nxt[])
+	{
+	    while ( x != nxt[x] ) x = nxt[x];
+	    return x;
+	}
+
+	
+	static class Pair
+	{
+		int f;
+		int s;
+		public Pair(int f, int s)
+		{
+			this.f = f;
+			this.s = s;
+		}
+	}
+	
+	
+	public static void main(String[] args)
+	{
+		Scanner in = new Scanner(System.in);
+		int n = in.nextInt();
+		int m = in.nextInt();
+
+		boolean vis[] = new boolean[n+2];
+		int nxt[] = new int[n+2];
+
+		int ans = 0;
+
+		for ( int i = 1; i <= n+1; i++ )
+		{
+			vis[i] = false;
+			nxt[i] = i;
+		}
+		nxt[n+1] = n+1;
+		ArrayList<Pair> p = new ArrayList<Solution.Pair>();
+		ArrayList<Pair> pairs = new ArrayList<Solution.Pair>();
+		int x, y, fs;
+		for ( int i = 1; i <= m; i++ ) 
+		{
+			x = in.nextInt();
+			y = in.nextInt();
+			p.add(new Pair(x,y));
+			fs = find_nxt(x, nxt);
+			ArrayList<Integer> make_alive = new ArrayList<Integer>();
+			ArrayList<Integer> make_dead = new ArrayList<Integer>();
+			while ( true )
+			{
+				if ( fs > y ) break;
+				make_alive.add(fs);
+				nxt[fs] = find_nxt(fs+1, nxt);
+				if ( fs == x )
+				{
+					if ( fs+1 <= y && vis[fs+1] == true )
+					{
+						make_dead.add(fs+1);
+						pairs.add(new Pair(fs,fs+1));
+						ans++;
+					}
+				}
+				else 
+					if ( fs == y )
+					{
+					
+						if ( fs-1 >= x && vis[fs-1] == true ) 
+						{
+						make_dead.add(fs-1);
+						pairs.add(new Pair(fs-1,fs));
+						ans++;
+					}
+				}
+				else {
+					if ( vis[fs-1] == true ) {
+						make_dead.add(fs-1);
+						pairs.add(new Pair(fs-1,fs));
+						ans++;
+					}
+					if ( vis[fs+1] == true ) {
+						make_dead.add(fs+1);
+						pairs.add(new Pair(fs,fs+1));
+						ans++;
+					}
+				}
+				fs = nxt[fs];
+			}
+			for ( int j = 0; j < make_alive.size(); j++ ) vis[make_alive.get(j)] = true;
+			for ( int j = 0; j < make_dead.size(); j++ ) vis[make_dead.get(j)] = false;
+		}
+		// OUTPUT
+		System.out.println(ans);
+		Collections.sort(pairs, new Comparator<Pair>() {
+
+			@Override
+			public int compare(Pair o1, Pair o2) {
+				// TODO Auto-generated method stub
+				return Integer.compare(o1.f,o2.f);
+			}
+		});
+		for ( int i = 0; i < ans; i++ ) 
+			System.out.println(pairs.get(i).f + " " + pairs.get(i).s);
+
+
+	}
+}
